@@ -52,7 +52,8 @@ server.post('/login',(req,res)=>{
 				if(data===undefined){
 					res.send({status:'error',message:'invalid credentials'});	
 				}else{
-					res.send({status:'ok',data:{userId:data.userId,isAdmin:data.isAdmin}});
+					
+					res.send({status:'ok',data:data});
 				}	
 			}else{
 				res.send({status:'error',message:err})
