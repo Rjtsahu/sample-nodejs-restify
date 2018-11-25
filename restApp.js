@@ -5,7 +5,18 @@ simple nodejs application for rest api based on restify and sqlite3
 
 var restify = require('restify')
 var server = restify.createServer();
+
+/// map request body to req.body as json
 server.use(restify.plugins.bodyParser({ mapParams: true }));
+
+/// allow cross origin 
+server.use(
+  function crossOrigin(req,res,next){
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    return next();
+  }
+);
 
 var DbServices = require('./dbServices').DbServices;
 var dbServices = new DbServices();
