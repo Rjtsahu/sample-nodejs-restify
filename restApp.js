@@ -5,18 +5,19 @@ simple nodejs application for rest api based on restify and sqlite3
 
 var restify = require('restify')
 var server = restify.createServer();
+const corsMiddleware = require('restify-cors-middleware')
+
+/// allow CORS by using plugin 
+const cors = corsMiddleware({
+  origins: ['*']
+})
+
+server.pre(cors.preflight)
+server.use(cors.actual)
 
 /// map request body to req.body as json
 server.use(restify.plugins.bodyParser({ mapParams: true }));
 
-/// allow cross origin 
-server.use(
-  function crossOrigin(req,res,next){
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    return next();
-  }
-);
 
 var DbServices = require('./dbServices').DbServices;
 var dbServices = new DbServices();
@@ -46,6 +47,7 @@ server.post('/register',(req,res)=>{
 // login
 server.post('/login',(req,res)=>{
 	var body = req.body;
+	
 	if(body.userId && body.password){
 		dbServices.login(body,(data,err)=>{
 			if(err===null || err===undefined){
@@ -59,6 +61,7 @@ server.post('/login',(req,res)=>{
 				res.send({status:'error',message:err})
 		}});
 	}else{
+			console.log(body.userId,body.password,'body');
 		res.send({status:"error",message:"some input field are missing."});
 	}
 });
